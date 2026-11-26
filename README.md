@@ -7,15 +7,19 @@
 ## 目录
 
 ```
-mc-shell-public/
-├─ Sources/
-│  ├─ Palette.swift         蓝紫低饱和渐变配色
-│  ├─ AssetImporter.swift   Data 原样读，不重编码
-│  └─ LauncherView.swift   按宽高比自动切换竖屏 / 横屏
-└─ Resources/
-   ├─ AppIcon.png           1024 蓝紫渐变 + 衬线 R
-   └─ LauncherPreview.png   横屏界面预览
+repo-root/
+├─ .gitignore
+├─ README.md
+├─ Palette.swift          蓝紫低饱和渐变配色
+├─ AssetImporter.swift    Data 原样读，不重编码
+├─ LauncherView.swift     按宽高比自动切换竖屏 / 横屏
+├─ AppIcon.png            1024 蓝紫渐变 + 衬线 R
+└─ LauncherPreview.png    横屏界面预览
 ```
+
+All files sit flat at repo root. No subdirectories needed: add the three
+.swift files and the two .png files to the Xcode target directly, or use
+`sources: [.]` in project.yml.
 
 ## 视觉
 
