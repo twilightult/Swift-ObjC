@@ -1,0 +1,12 @@
+*.ipa
+*.p12
+*.mobileprovision
+build/
+DerivedData/
+*.xcarchive
+mc_assets_local/
+mc_textures_1.20.1/
+ticket*.txt
+versionSalt*
+watermark*
+.DS_Store
