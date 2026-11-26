@@ -289,5 +289,5 @@ struct LauncherView: View {
     }
 }
 
-#Preview("横屏") { LauncherView().previewInterfaceOrientation(.landscapeLeft) }
+#Preview("横屏", traits: .landscapeLeft) { LauncherView() }
 #Preview("竖屏") { LauncherView() }
