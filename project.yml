@@ -1,0 +1,31 @@
+name: MCShell
+options:
+  deploymentTarget:
+    iOS: "16.0"
+  groupSortPosition: top
+targets:
+  MCShell:
+    type: application
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      - path: .
+        excludes:
+          - "*.md"
+          - "*.yml"
+          - "*.yaml"
+          - "*.plist"
+          - ".gitignore"
+          - ".github/**"
+          - "*.zip"
+          - "*.ipa"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: local.mcshell
+        SWIFT_VERSION: "5.9"
+        INFOPLIST_FILE: Info.plist
+        SWIFT_OBJC_BRIDGING_HEADER: MCShell-Bridging-Header.h
+        CLANG_ENABLE_MODULES: YES
+        TARGETED_DEVICE_FAMILY: "1,2"
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGNING_ALLOWED: NO
