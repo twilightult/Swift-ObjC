@@ -289,5 +289,13 @@ struct LauncherView: View {
     }
 }
 
-#Preview("横屏", traits: .landscapeLeft) { LauncherView() }
-#Preview("竖屏") { LauncherView() }
+struct LauncherView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            LauncherView().previewDisplayName("Portrait")
+            LauncherView()
+                .frame(width: 844, height: 390)
+                .previewDisplayName("Landscape")
+        }
+    }
+}
