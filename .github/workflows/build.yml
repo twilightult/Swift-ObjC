@@ -1,0 +1,32 @@
+name: build-ipa
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate Xcode project
+        run: |
+          brew install xcodegen
+          xcodegen generate
+      - name: Archive (unsigned)
+        run: |
+          xcodebuild -scheme MCShell -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath build/MC.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            archive
+      - name: Pack unsigned IPA
+        run: |
+          mkdir -p out/Payload
+          cp -R build/MC.xcarchive/Products/Applications/MCShell.app out/Payload/
+          cd out && zip -qr MCShell-unsigned.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MCShell-unsigned-ipa
+          path: out/MCShell-unsigned.ipa
+          retention-days: 7
