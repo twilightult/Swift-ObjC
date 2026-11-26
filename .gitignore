@@ -1,0 +1,28 @@
+# build artifacts & signing
+*.ipa
+*.xcarchive
+build/
+DerivedData/
+out/
+*.p12
+*.mobileprovision
+*.cer
+*.certSigningRequest
+xcuserdata/
+*.xcuserstate
+
+# local imported assets (keep repo icons)
+mc_assets_local/
+mc_textures_1.20.1/
+imported_assets/
+
+# one-time ticket / version salt / watermark
+ticket*
+versionSalt*
+watermark*
+*.ticket
+
+# stray
+mc-engine/
+.DS_Store
+Thumbs.db
