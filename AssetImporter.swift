@@ -1,18 +1,25 @@
+import UIKit
+import UniformTypeIdentifiers
 import Foundation
 
-/// 把用户本机文件原样读成 Data：不转 String、不重编码、不另存、不标准化。
-/// 解出的资源只回内存喂图集，不写 Documents / UserDefaults / Keychain。
 enum AssetImporter {
-    static func read(_ url: URL) throws -> Data {
-        let secured = url.startAccessingSecurityScopedResource()
-        defer { if secured { url.stopAccessingSecurityScopedResource() } }
-        return try Data(contentsOf: url)
+    static func makePicker() -> UIDocumentPickerViewController {
+        let p = UIDocumentPickerViewController(forOpeningContentTypes: [.png])
+        p.allowsMultipleSelection = true
+        return p
     }
 
-    static func pngs(in dir: URL) throws -> [URL] {
-        try FileManager.default
-            .contentsOfDirectory(at: dir, includingPropertiesForKeys: nil)
-            .filter { $0.pathExtension.lowercased() == "png" }
-            .sorted { $0.lastPathComponent < $1.lastPathComponent }
+    // Data in, Data out. No UIImage round-trip, no re-encode,
+    // so LSB watermark pixels survive byte for byte.
+    static func copyIntoDocuments(_ urls: [URL]) {
+        let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("assets", isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        for u in urls {
+            let scoped = u.startAccessingSecurityScopedResource()
+            defer { if scoped { u.stopAccessingSecurityScopedResource() } }
+            guard let data = try? Data(contentsOf: u) else { continue }
+            try? data.write(to: dir.appendingPathComponent(u.lastPathComponent), options: .atomic)
+        }
     }
 }

@@ -1,33 +1,53 @@
-# MC · 启动器
+# MCShell engine (private)
 
-未越狱 iOS 上、零 JIT / 零 WebView / 全 AOT 的行为规范兼容客户端。Swift · ObjC。
+Private repo. Swift + Objective-C + Metal. Zero JIT, zero WebView, all AOT.
+Launcher shell lives in the public repo; this repo only builds the IPA.
 
-公开仓只放壳：启动器界面、导入口、原创蓝紫浅变色视觉。引擎源码与 CI 在私有仓；`block/*.png` 等资源由用户本机导入，不进任何仓库。
+## Layout
 
-## 目录
+All files sit flat at repo root on purpose. No subdirectories to create.
 
 ```
 repo-root/
-├─ .gitignore
-├─ README.md
-├─ Palette.swift          蓝紫低饱和渐变配色
-├─ AssetImporter.swift    Data 原样读，不重编码
-├─ LauncherView.swift     按宽高比自动切换竖屏 / 横屏
-├─ AppIcon.png            1024 蓝紫渐变 + 衬线 R
-└─ LauncherPreview.png    横屏界面预览
+  .gitignore
+  README.md
+  project.yml
+  Info.plist
+  Shaders.metal
+  MCMemoryProbe.h / .m
+  MCShell-Bridging-Header.h
+  AppDelegate.swift
+  GameVC.swift
+  ChunkMesh.swift
+  TextureAtlas.swift
+  AssetImporter.swift
+  MemoryBudget.swift
+  TitleView.swift
+  .github/workflows/build.yml   <- the ONLY file with a path
 ```
 
-All files sit flat at repo root. No subdirectories needed: add the three
-.swift files and the two .png files to the Xcode target directly, or use
-`sources: [.]` in project.yml.
+## Upload order (iPad / GitHub web)
 
-## 视觉
+1. Add file -> Upload files -> multi-select all 15 flat files. They land at root.
+2. Add file -> Create new file -> name it exactly
+   `.github/workflows/build.yml` (the slashes create the folders), paste the
+   workflow content, commit. This is the only path-typed file.
+3. Commit .gitignore from the same Create new file screen if the dotfile was
+   hidden in Files app.
 
-蓝紫低饱和「浅变色」：底色近白，横幅与主按钮从蓝过渡到紫。图标为蓝紫渐变底 + Playfair Display 衬线大写 R，界面横幅沿用同一 R 作低透明水印。布局参照桌面启动器：横屏为「左侧栏（实例 / 工具 / 账户）+ 右侧主区（状态条 / 横幅 / 信息卡 / 启动按钮）」，竖屏保留分组网格与底部固定栏，由 `GeometryReader` 按宽高比自动切换。
+## Build
 
-## 构建
+- `xcodegen generate` -> `xcodebuild archive CODE_SIGNING_ALLOWED=NO`
+- CI packs `MCShell.app` straight into an unsigned IPA. No Export.plist, no
+  certificate, no secrets in the pipeline.
+- Sign locally once (Sideloadly / SideStore), install on a NON-jailbroken
+  device for acceptance. A jailbroken iPad hides every signature problem.
 
-- 引擎在私有仓用 macOS runner（XcodeGen + `xcodebuild`）导出 IPA，CI 不 checkout 资源目录
-- 导出后本地签一次
-- 验收使用未越狱机
-- 文件 App 把本机 16×16 PNG 目录拖入沙盒 → 导入口读入 → 第一帧草方块
+## Assets
+
+User imports 16x16 PNGs via Files app into Documents/assets/. If nothing is
+imported, TextureAtlas falls back to three solid 16x16 colors so the first
+frame still renders. CI never checks out any asset directory.
+
+Ticket / versionSalt / watermark coordinates are generated offline and never
+enter this repo or the workflow.
